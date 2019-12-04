@@ -16,7 +16,12 @@ export class ClientesComponent  implements OnInit {
 
   ngOnInit() {
    
-    this.clientes = this.clienteService.getClientes();
+   // this.clientes = this.clienteService.getClientes();
+
+   //En este ajuste se esta subscribiendo el metodo getClientes ya que en la capa services (ClienteService) se implemento el patron Observable
+   this.clienteService.getClientes().subscribe(
+      (clientes) => this.clientes = clientes
+   );
    
   }
 
