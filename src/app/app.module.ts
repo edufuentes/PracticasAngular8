@@ -8,9 +8,11 @@ import { DirectivaComponent } from './directiva/directiva.component';
 import { ClientesComponent } from './clientes/clientes.component';
 import { ClienteService } from './clientes/cliente.service';
 import { RouterModule, Routes } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { FormComponent } from './clientes/form.component';
 
 const routes : Routes = [
-  {path:'',redirectTo: '/clientes', pathMatch: 'full'},
+  {path:'',redirectTo: '/directivas', pathMatch: 'full'},
   {path:'directivas', component: DirectivaComponent},
   {path:'clientes', component: ClientesComponent},
 ];
@@ -22,10 +24,12 @@ const routes : Routes = [
     HeaderComponent,
     FooterComponent,
     DirectivaComponent,
-    ClientesComponent
+    ClientesComponent,
+    FormComponent
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     RouterModule.forRoot(routes)
   ],
   providers: [ClienteService],
