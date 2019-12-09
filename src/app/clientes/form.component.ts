@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Cliente } from './cliente';
 import { ClienteService } from './cliente.service';
-import { Router } from '@angular/router'
+import { Router, ActivatedRoute } from '@angular/router';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-form',
@@ -12,9 +13,10 @@ export class FormComponent implements OnInit {
   private cliente: Cliente = new Cliente();
   private titulo:string = "Crear Cliente";
 
-  constructor(private clienteService: ClienteService, private router:Router) { }
+  constructor(private clienteService: ClienteService, private router:Router,private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
+    this.cargarCliente();
   }
 
   public create(): void{
@@ -24,7 +26,10 @@ export class FormComponent implements OnInit {
     
         this.clienteService.create(this.cliente).subscribe(
            //se redirige al listado para mostrar el registro agregado, por eso se llama a la vista del listado con el "router"
-          response => this.router.navigate(['/clientes'])
+          cliente => {
+            this.router.navigate(['/clientes'])
+            swal.fire('Nuevo Cliente',`Cliente ${cliente.nombre} creado con exito!`,'success')
+          }
         );
 
   }
@@ -34,5 +39,37 @@ export class FormComponent implements OnInit {
     return this.titulo;
   
   }
+
+
+  cargarCliente(): void{
+
+    this.activatedRoute.params.subscribe(params => {
+      let id = params['id']
+        if(id){
+          this.clienteService.getCliente(id).subscribe( (cliente) => this.cliente = cliente );
+        }
+        
+        /*else{
+          swal.fire('Falta ID','No se ha suministrado un ID','error').then( response => {
+            this.router.navigate(['/clientes']);            
+          })          
+        }*/
+    })
+
+  }
+
+
+  update(): void {
+
+    this.clienteService.update(this.cliente).subscribe(
+          cliente => {
+              this.router.navigate(['/clientes'])
+              swal.fire('Cliente Actualizado',`Cliente ${cliente.nombre} actualizado con éxito!`,'success')
+          }
+    );
+
+  }
+
+
 
 }
