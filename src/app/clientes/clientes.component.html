@@ -5,7 +5,14 @@
         <div>
             <button class="btn btn-rounded btn-primary" type="button" [routerLink]="['/clientes/form']">Crear Cliente</button>
         </div>
-        <table class="table table-bordered table-striped text-primary">
+        <br/>
+        <!-- <div *ngIf="clientes.length == 0" class="alert alert-info"> foma corta -->
+        <div *ngIf="!isRegistrosExistentes()" class="alert alert-info">
+
+            No hay Registros en la Base de Datos
+        </div>
+        <!-- <table class="table table-bordered table-striped text-primary" *ngIf="clientes.length > 0"> forma corta -->
+        <table class="table table-bordered table-striped text-primary" *ngIf="isRegistrosExistentes()">
             <thead>
                 <tr>
                     <th>id</th>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Cliente } from './cliente';
 import { ClienteService } from './cliente.service';
 import swal from 'sweetalert2';
+import { isDefined } from '@angular/compiler/src/util';
 
 @Component({
   selector: 'app-clientes',
@@ -10,7 +11,7 @@ import swal from 'sweetalert2';
 export class ClientesComponent  implements OnInit {
   
 
-  clientes: Cliente[];
+  clientes: Cliente[] = [];
 
 
   constructor(private clienteService: ClienteService ) { }
@@ -67,6 +68,16 @@ export class ClientesComponent  implements OnInit {
         )        
       } 
     })
+
+  }
+
+
+  isRegistrosExistentes(): boolean {
+
+      if(this.clientes.length >0)
+        return true;
+      else
+        return false;
 
   }
 
