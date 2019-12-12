@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { CLIENTES } from './clientes.json';
 import { Cliente } from './cliente';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
+import swal from 'sweetalert2';
+import { Router } from '@angular/router';
 
 /*
 De esta forma en angular 8 se inyecta la clase Service automaticamente en el app.module.ts sin necesidad de referenciarlo desde alla en la propiedad providers: []
@@ -18,14 +20,22 @@ export class ClienteService {
   private htttpHeaders = new HttpHeaders({'Content-Type':'application/json'});
   private urlEndPoint:string = 'http://localhost:8080/api/clientes';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router:Router) { }
 
   getClientes(): Observable<Cliente[]> {
   
     //return of(CLIENTES)
 
     //forma 1: se esta casteango la respuesta json a objeto Cliente[]  
-     return  this.http.get<Cliente[]>(this.urlEndPoint);
+     return  this.http.get<Cliente[]>(this.urlEndPoint).pipe(
+
+      catchError( e =>{
+        console.error(e.error.mensaje);
+        //swal.fire('Error al crear al cliente', e.error.mensaje,'error');
+        swal.fire(e.error.mensaje,e.error.error,'error');
+        return throwError(e);
+      })            
+  );
 
     //forma 2: se esta casteango la respuesta json a objeto Cliente[]  
     /*return  this.http.get<Cliente[]>(this.urlEndPoint).pipe(
@@ -34,29 +44,60 @@ export class ClienteService {
 
   }
 
-  create(cliente: Cliente): Observable<Cliente> {
+  create(cliente: Cliente): Observable<any> {
     
-    return this.http.post<Cliente>(this.urlEndPoint,cliente,{headers:this.htttpHeaders});
-  
+    return this.http.post<any>(this.urlEndPoint,cliente,{headers:this.htttpHeaders}).pipe(
+
+          catchError( e =>{
+            console.error(e.error.mensaje);
+            //swal.fire('Error al crear al cliente', e.error.mensaje,'error');
+            swal.fire('Error al crear al cliente',e.error.error == null ? e.error.errors.toString() : e.error.error,'error');
+            return throwError(e);
+          })            
+      );
   }
 
   getCliente(id: string): Observable<Cliente>{
     
-    return this.http.get<Cliente>(`${this.urlEndPoint}/${id}`);
+    return this.http.get<Cliente>(`${this.urlEndPoint}/${id}`).pipe(
+          
+            catchError(e =>{
+               this.router.navigate(['/clientes']);
+               console.error(e.error.mensaje);   
+              swal.fire('Error al editar', e.error.mensaje,'error');
+              return throwError(e);
+            })
+    );
 
   }
 
 
   update(cliente: Cliente): Observable<Cliente>{
 
-    return this.http.put<Cliente>(`${this.urlEndPoint}/${cliente.id}`,cliente,{headers:this.htttpHeaders});
+    return this.http.put<Cliente>(`${this.urlEndPoint}/${cliente.id}`,cliente,{headers:this.htttpHeaders}).pipe(
+
+      catchError( e => {
+        console.error(e.error.mensaje);
+        //swal.fire('Error al editar al cliente', e.error.mensaje,'error');
+        swal.fire(e.error.mensaje,e.error.error,'error');
+        return throwError(e);
+      })            
+    );
 
   }
 
 
   delete(id:number): Observable<Cliente>{
 
-    return this.http.delete<Cliente>(`${this.urlEndPoint}/${id}`,{headers:this.htttpHeaders});
+    return this.http.delete<Cliente>(`${this.urlEndPoint}/${id}`,{headers:this.htttpHeaders}).pipe(
+
+      catchError( e => {
+        console.error(e.error.mensaje);
+        //swal.fire('Error al elimniar al cliente', e.error.mensaje,'error');
+        swal.fire(e.error.mensaje,e.error.error,'error');
+        return throwError(e);
+      })            
+    );
     
   }
 }

@@ -26,9 +26,9 @@ export class FormComponent implements OnInit {
     
         this.clienteService.create(this.cliente).subscribe(
            //se redirige al listado para mostrar el registro agregado, por eso se llama a la vista del listado con el "router"
-          cliente => {
+          json => {
             this.router.navigate(['/clientes'])
-            swal.fire('Nuevo Cliente',`Cliente ${cliente.nombre} creado con exito!`,'success')
+            swal.fire('Nuevo Cliente',`Cliente ${json.cliente.nombre} creado con exito!`,'success')
           }
         );
 
