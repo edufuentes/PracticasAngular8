@@ -26,9 +26,9 @@ export class FormComponent implements OnInit {
     
         this.clienteService.create(this.cliente).subscribe(
            //se redirige al listado para mostrar el registro agregado, por eso se llama a la vista del listado con el "router"
-          json => {
+          cliente => {
             this.router.navigate(['/clientes'])
-            swal.fire('Nuevo Cliente',`Cliente ${json.cliente.nombre} creado con exito!`,'success')
+            swal.fire('Nuevo Cliente',`El cliente ${cliente.nombre}  ha sdo creado con éxito! `,'success')
           }
         );
 
@@ -62,9 +62,9 @@ export class FormComponent implements OnInit {
   update(): void {
 
     this.clienteService.update(this.cliente).subscribe(
-          cliente => {
+          json => {
               this.router.navigate(['/clientes'])
-              swal.fire('Cliente Actualizado',`Cliente ${cliente.nombre} actualizado con éxito!`,'success')
+              swal.fire('Cliente Actualizado',`${json.mensaje}: ${json.cliente.nombre}`,'success')
           }
     );
 

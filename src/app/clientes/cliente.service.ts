@@ -44,10 +44,10 @@ export class ClienteService {
 
   }
 
-  create(cliente: Cliente): Observable<any> {
+  create(cliente: Cliente): Observable<Cliente> {
     
-    return this.http.post<any>(this.urlEndPoint,cliente,{headers:this.htttpHeaders}).pipe(
-
+    return this.http.post(this.urlEndPoint,cliente,{headers:this.htttpHeaders}).pipe(
+          map( (response: any) => response.cliente as Cliente),
           catchError( e =>{
             console.error(e.error.mensaje);
             //swal.fire('Error al crear al cliente', e.error.mensaje,'error');
@@ -64,7 +64,8 @@ export class ClienteService {
             catchError(e =>{
                this.router.navigate(['/clientes']);
                console.error(e.error.mensaje);   
-              swal.fire('Error al editar', e.error.mensaje,'error');
+              //swal.fire('Error al editar', e.error.mensaje,'error');
+              swal.fire('Error al Editar al cliente',e.error.error == null ? e.error.errors.toString() : e.error.error,'error');
               return throwError(e);
             })
     );
@@ -72,14 +73,14 @@ export class ClienteService {
   }
 
 
-  update(cliente: Cliente): Observable<Cliente>{
+  update(cliente: Cliente): Observable<any>{
 
-    return this.http.put<Cliente>(`${this.urlEndPoint}/${cliente.id}`,cliente,{headers:this.htttpHeaders}).pipe(
+    return this.http.put<any>(`${this.urlEndPoint}/${cliente.id}`,cliente,{headers:this.htttpHeaders}).pipe(
 
       catchError( e => {
         console.error(e.error.mensaje);
         //swal.fire('Error al editar al cliente', e.error.mensaje,'error');
-        swal.fire(e.error.mensaje,e.error.error,'error');
+        swal.fire('Error al Editar al cliente',e.error.error == null ? e.error.errors.toString() : e.error.error,'error');
         return throwError(e);
       })            
     );
@@ -94,7 +95,7 @@ export class ClienteService {
       catchError( e => {
         console.error(e.error.mensaje);
         //swal.fire('Error al elimniar al cliente', e.error.mensaje,'error');
-        swal.fire(e.error.mensaje,e.error.error,'error');
+        swal.fire('Error al elimniar al cliente', e.error.mensaje + '<br/>' + e.error.error ,'error');
         return throwError(e);
       })            
     );
