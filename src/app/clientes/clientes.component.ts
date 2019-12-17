@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Cliente } from './cliente';
 import { ClienteService } from './cliente.service';
 import swal from 'sweetalert2';
-import { isDefined } from '@angular/compiler/src/util';
+import { tap } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-clientes',
@@ -21,7 +22,14 @@ export class ClientesComponent  implements OnInit {
    // this.clientes = this.clienteService.getClientes();
 
    //En este ajuste se esta subscribiendo el metodo getClientes ya que en la capa services (ClienteService) se implemento el patron Observable
-   this.clienteService.getClientes().subscribe(
+   this.clienteService.getClientes().pipe(
+     tap(clientes => {
+        console.log('ClientesComponent:getClientes: tap 3');         
+        clientes.forEach( cliente => {
+        console.log(cliente.nombre);
+      })
+     })
+   ).subscribe(
       (clientes) => this.clientes = clientes
    );
    

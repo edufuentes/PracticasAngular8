@@ -3,7 +3,7 @@ import { CLIENTES } from './clientes.json';
 import { Cliente } from './cliente';
 import { Observable, of, throwError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, tap } from 'rxjs/operators';
 import swal from 'sweetalert2';
 import { Router } from '@angular/router';
 import { formatDate, DatePipe } from '@angular/common';
@@ -29,6 +29,13 @@ export class ClienteService {
 
     //forma 1: se esta casteango la respuesta json a objeto Cliente[]  
      return  this.http.get<Cliente[]>(this.urlEndPoint).pipe(
+       tap(response => {
+        console.log('ClienteService:getClientes: tap 1');
+         let clientes = response as Cliente[];
+         clientes.forEach( cliente => {
+           console.log(cliente.nombre);
+         })
+       }),
        map(response => {
           let clientes = response as Cliente[];
           console.log("size array: " + clientes.length + " clientes: " + JSON.stringify(clientes));
@@ -42,6 +49,12 @@ export class ClienteService {
             console.log( "cliente: " + JSON.stringify(cliente));
             return cliente;
           });
+       }),
+       tap(clientes => {
+        console.log('ClienteService:getClientes: tap 2');         
+         clientes.forEach( cliente => {
+           console.log(cliente.nombre);
+         })
        }),
       catchError( e =>{
         console.error(e.error.mensaje);
