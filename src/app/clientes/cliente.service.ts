@@ -6,6 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import swal from 'sweetalert2';
 import { Router } from '@angular/router';
+import { formatDate, DatePipe } from '@angular/common';
 
 /*
 De esta forma en angular 8 se inyecta la clase Service automaticamente en el app.module.ts sin necesidad de referenciarlo desde alla en la propiedad providers: []
@@ -28,7 +29,20 @@ export class ClienteService {
 
     //forma 1: se esta casteango la respuesta json a objeto Cliente[]  
      return  this.http.get<Cliente[]>(this.urlEndPoint).pipe(
+       map(response => {
+          let clientes = response as Cliente[];
+          console.log("size array: " + clientes.length + " clientes: " + JSON.stringify(clientes));
 
+          return clientes.map(cliente => {
+            
+            cliente.nombre = cliente.nombre.toUpperCase();
+            let datePipe = new DatePipe('en-US');
+            cliente.createAt = datePipe.transform(cliente.createAt,'dd/MM/yyyy')
+            //cliente.createAt = formatDate(cliente.createAt,'dd-MM-yyyy','en-US');
+            console.log( "cliente: " + JSON.stringify(cliente));
+            return cliente;
+          });
+       }),
       catchError( e =>{
         console.error(e.error.mensaje);
         //swal.fire('Error al crear al cliente', e.error.mensaje,'error');
